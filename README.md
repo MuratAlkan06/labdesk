@@ -74,7 +74,9 @@ Written for macOS with the commands run from a terminal at the repository root
    server then starts and prints its address:
 
    ```
-   Local URL: http://localhost:8501
+   You can now view your Streamlit app in your browser.
+
+   URL: http://127.0.0.1:8501
    ```
 
    Open that URL in a browser if a tab does not open by itself, and use the
