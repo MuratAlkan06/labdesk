@@ -31,6 +31,18 @@ QUEUE_PAGE = "Queue"
 DASHBOARD_PAGE = "Dashboard"
 PAGES = [SUBMIT_PAGE, QUEUE_PAGE, DASHBOARD_PAGE]
 
+# Which interface to show. This is a view switch, not a login: the project has
+# no accounts and no authentication, so the sidebar simply asks which view you
+# want. Student is listed first, so the default view is the narrower one.
+STUDENT_ROLE = "Student"
+STAFF_ROLE = "Staff"
+ROLES = [STUDENT_ROLE, STAFF_ROLE]
+
+# A ticket filed from the student view arrived through the web form by
+# definition, so that view records this source instead of asking for it. Read
+# from core rather than retyped (PRINCIPLES.md §2).
+WEB_FORM = core.SOURCES[0]
+
 # The only key this app puts in session state (PRINCIPLES.md §6): the ticket the
 # Queue page currently has open, or None for the list view.
 OPEN_TICKET_ID = "open_ticket_id"
@@ -87,7 +99,14 @@ def open_ticket(ticket_id):
 # --- Feature 1: Submit -------------------------------------------------------
 
 
-def render_submit():
+def render_submit(show_source):
+    """The submit form. show_source is False in the student view.
+
+    Staff choose the source because they back-enter requests that reached the
+    desk by email or in person. Someone filing this form themselves is using
+    the web form, so the student view records WEB_FORM rather than offering a
+    choice the adoption metric would then have to trust.
+    """
     st.header("Submit a ticket")
     st.write("Tell the lab desk what you need. Fields marked * are required.")
 
@@ -105,7 +124,7 @@ def render_submit():
         with left:
             category = st.selectbox("Category", core.CATEGORIES)
             priority = st.selectbox("Priority", core.PRIORITIES)
-            source = st.selectbox("Source", core.SOURCES)
+            source = st.selectbox("Source", core.SOURCES) if show_source else WEB_FORM
         with right:
             requester_name = st.text_input("Your name *")
             requester_email = st.text_input("Your email")
@@ -472,11 +491,17 @@ def main():
 
     st.sidebar.title("LabDesk")
     st.sidebar.caption("CMPE Department Lab Support Desk")
-    page = st.sidebar.radio("Go to", PAGES)
+    role = st.sidebar.radio("View as", ROLES)
+    # The student view is the submit form and nothing else, so it needs no page
+    # navigation; the staff view is the whole desk. Hiding the "Go to" radio
+    # also drops its value, so a switch back to Staff starts at Submit Ticket
+    # instead of a page the student view never showed.
+    is_staff = role == STAFF_ROLE
+    page = st.sidebar.radio("Go to", PAGES) if is_staff else SUBMIT_PAGE
 
     st.title("LabDesk")
     if page == SUBMIT_PAGE:
-        render_submit()
+        render_submit(show_source=is_staff)
     elif page == QUEUE_PAGE:
         render_queue()
     else:
