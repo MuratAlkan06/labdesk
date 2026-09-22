@@ -66,7 +66,7 @@ Written for macOS with the commands run from a terminal at the repository root
 5. **Start the application**, also from the repository root:
 
    ```bash
-   .venv/bin/streamlit run app.py
+   .venv/bin/streamlit run app.py --server.address 127.0.0.1
    ```
 
    The first time Streamlit runs on a machine it asks for an optional email
