@@ -183,7 +183,7 @@ Re-run it any time the demo data gets messy:
 
 ## AI-Assisted Development
 
-1. _Tools used — to be completed._
-2. _What the AI helped build — to be completed._
-3. _An example where AI-generated code did not work or required modification — to be completed._
-4. _An important decision the human made — to be completed._
+1. **Tools used.** Claude Code (Anthropic) running a set of custom subagents — an orchestrator plus specialists for git workflow, design review, security review and independent verification — with Claude (claude.ai) used for planning, the numerical model and the written analysis.
+2. **What the AI helped build.** Essentially all of the code: the data layer and status-transition logic (`core.py`), the seed data, the 28 tests, the Streamlit interface (`app.py`), the three analysis scripts and the histogram, and the first draft of this README. It also ran the review passes: a live browser design review, a security review (parameterized SQL, a dependency audit, binding the demo server to localhost), and an independent verification from a fresh clone.
+3. **An example where AI-generated code did not work.** The ticket detail view computed "days open" as now minus creation time for every ticket, including resolved and closed ones, so a ticket fixed in 30 hours showed "Days open: 14.6". All 28 tests passed with the defect in place, because they cover `core.py` and the bug was in the interface layer; it was caught by the design reviewer in a live browser and fixed by branching on `resolved_at` with a `days_to_resolution` helper. Smaller cases are in `LOG.md`: the dashboard bar charts sorted statuses alphabetically instead of Open → In Progress → Resolved → Closed (Vega-Lite's default, fixed with `sort=False`), and the model's own docstrings twice tripped the keyword checks it had been asked to enforce.
+4. **An important decision the human made.** The dashboard reports each technician's open workload but never ranks technicians by resolution speed. That is a product and ethics decision about what the metrics should incentivize (Parts E3 and G of the report), made before coding and enforced through verification; the AI would have built whichever was specified. The other human decisions were the fixed four-feature scope — no login, no email, no cloud — and framing the financial analysis as pilot-before-commit.
