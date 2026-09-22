@@ -79,9 +79,10 @@ Written for macOS with the commands run from a terminal at the repository root
    URL: http://127.0.0.1:8501
    ```
 
-   Open that URL in a browser if a tab does not open by itself, and use the
-   sidebar to move between Submit Ticket, Queue and Dashboard. Stop the server
-   with `Ctrl+C`.
+   Open that URL in a browser if a tab does not open by itself. The sidebar
+   opens on **View as: Student**, which shows only the submit form; switch it
+   to **Staff** to get the Go to control and move between Submit Ticket, Queue
+   and Dashboard. Stop the server with `Ctrl+C`.
 
 ### Running the tests
 
@@ -113,10 +114,19 @@ histogram each time it runs.
 
 ## Major features
 
+The sidebar carries a **View as** switch with two views. **Student** — the
+default — shows the submit form and nothing else. **Staff** shows the whole
+application: Submit, Queue, Triage and Dashboard. It is a view switch, not a
+login; the prototype has no accounts and authenticates nobody, so the switch
+only decides which interface is on screen.
+
 - **Submit** — A form for logging a request: title, description, category,
-  priority, source, and requester name and email. Empty or out-of-range values
-  are refused with a message naming the field, and every new ticket starts Open
-  and unassigned.
+  priority, and requester name and email. Empty or out-of-range values are
+  refused with a message naming the field, and every new ticket starts Open and
+  unassigned. The staff view adds a Source selector, so the desk can back-enter
+  a request that arrived by email or in person; the student view has no such
+  control and records the source as Web form, because a ticket filed there did
+  arrive through the form. That is what keeps the adoption metric honest.
 - **Queue** — One list of all tickets, newest first, with a case-insensitive
   text search over title and description plus filters for status, priority,
   category and assignee (including an Unassigned bucket); the filters combine,
