@@ -99,16 +99,29 @@ def open_ticket(ticket_id):
 # --- Feature 1: Submit -------------------------------------------------------
 
 
-def render_submit(show_source):
-    """The submit form. show_source is False in the student view.
+def render_submit(is_staff):
+    """The submit form, in the student view (is_staff False) or the staff one.
 
     Staff choose the source because they back-enter requests that reached the
     desk by email or in person. Someone filing this form themselves is using
     the web form, so the student view records WEB_FORM rather than offering a
-    choice the adoption metric would then have to trust.
+    choice the adoption metric would then have to trust. For the same reason
+    the person named in the form is the requester when staff fill it in, and
+    the person typing when a student does.
     """
     st.header("Submit a ticket")
-    st.write("Tell the lab desk what you need. Fields marked * are required.")
+    intro = (
+        "Log a request that reached the desk by email or in person."
+        if is_staff
+        else "Tell the lab desk what you need."
+    )
+    st.write(f"{intro} Fields marked * are required.")
+
+    # Staff enter someone else's request, so their fields ask for the
+    # requester; a student is filling the form in for themselves. The word is
+    # the domain's own (PRINCIPLES.md §4) and is reused by the error below so
+    # the message names the field the form actually shows.
+    requester_word = "Requester" if is_staff else "Your"
 
     with st.form("submit_ticket", clear_on_submit=True):
         title = st.text_input(
@@ -124,10 +137,10 @@ def render_submit(show_source):
         with left:
             category = st.selectbox("Category", core.CATEGORIES)
             priority = st.selectbox("Priority", core.PRIORITIES)
-            source = st.selectbox("Source", core.SOURCES) if show_source else WEB_FORM
+            source = st.selectbox("Source", core.SOURCES) if is_staff else WEB_FORM
         with right:
-            requester_name = st.text_input("Your name *")
-            requester_email = st.text_input("Your email")
+            requester_name = st.text_input(f"{requester_word} name *")
+            requester_email = st.text_input(f"{requester_word} email")
 
         submitted = st.form_submit_button("Submit ticket")
 
@@ -138,7 +151,10 @@ def render_submit(show_source):
         st.error("Title is required. Please describe the problem in a few words.")
         return
     if not requester_name.strip():
-        st.error("Your name is required so the desk knows who to follow up with.")
+        st.error(
+            f"{requester_word} name is required so the desk knows who to "
+            "follow up with."
+        )
         return
 
     try:
@@ -156,10 +172,20 @@ def render_submit(show_source):
         st.error(str(exc))
         return
 
-    st.success(
-        f"Ticket #{ticket_id} submitted with status {core.STATUSES[0]}. "
-        "It is waiting for a technician and is already on the Queue page."
-    )
+    # Where the ticket goes next is different for each view: staff can open it
+    # on the Queue page, which the student view does not have, so the student
+    # is told what to hold on to instead of pointed at a page they cannot see.
+    if is_staff:
+        st.success(
+            f"Ticket #{ticket_id} submitted with status {core.STATUSES[0]}. "
+            "It is waiting for a technician and is already on the Queue page."
+        )
+    else:
+        st.success(
+            f"Ticket #{ticket_id} submitted with status {core.STATUSES[0]}. "
+            "It is waiting for a technician. Keep the ticket number if you "
+            "need to follow up at the desk."
+        )
 
 
 # --- Feature 2: Queue --------------------------------------------------------
@@ -501,7 +527,7 @@ def main():
 
     st.title("LabDesk")
     if page == SUBMIT_PAGE:
-        render_submit(show_source=is_staff)
+        render_submit(is_staff=is_staff)
     elif page == QUEUE_PAGE:
         render_queue()
     else:
