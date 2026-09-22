@@ -124,9 +124,11 @@ only decides which interface is on screen.
   priority, and requester name and email. Empty or out-of-range values are
   refused with a message naming the field, and every new ticket starts Open and
   unassigned. The staff view adds a Source selector, so the desk can back-enter
-  a request that arrived by email or in person; the student view has no such
-  control and records the source as Web form, because a ticket filed there did
-  arrive through the form. That is what keeps the adoption metric honest.
+  a request that arrived by email or in person, and labels the name and email
+  fields for the requester rather than the reader, because staff log other
+  people's requests; the student view has no such control and records the
+  source as Web form, because a ticket filed there did arrive through the form.
+  That is what keeps the adoption metric honest.
 - **Queue** — One list of all tickets, newest first, with a case-insensitive
   text search over title and description plus filters for status, priority,
   category and assignee (including an Unassigned bucket); the filters combine,
