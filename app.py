@@ -518,12 +518,28 @@ def main():
     st.sidebar.title("LabDesk")
     st.sidebar.caption("CMPE Department Lab Support Desk")
     role = st.sidebar.radio("View as", ROLES)
+    # Both sidebar groups are radio buttons, so without this caption and the
+    # divider below they read as one list and "Student" looks like a page to
+    # navigate to rather than a whole interface to switch into.
+    st.sidebar.caption(
+        "Switches this demo between the student submit form and the full desk "
+        "view. It is not a login; the prototype has no accounts."
+    )
+
     # The student view is the submit form and nothing else, so it needs no page
     # navigation; the staff view is the whole desk. Hiding the "Go to" radio
     # also drops its value, so a switch back to Staff starts at Submit Ticket
     # instead of a page the student view never showed.
     is_staff = role == STAFF_ROLE
-    page = st.sidebar.radio("Go to", PAGES) if is_staff else SUBMIT_PAGE
+    if is_staff:
+        st.sidebar.divider()
+        page = st.sidebar.radio("Go to", PAGES)
+    else:
+        page = SUBMIT_PAGE
+        # The open ticket is a Queue position, and the student view has no
+        # Queue: left in place it would send staff straight back to a ticket
+        # detail the next time they open that page.
+        st.session_state[OPEN_TICKET_ID] = None
 
     st.title("LabDesk")
     if page == SUBMIT_PAGE:
