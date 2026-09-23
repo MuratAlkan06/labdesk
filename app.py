@@ -518,13 +518,6 @@ def main():
     st.sidebar.title("LabDesk")
     st.sidebar.caption("CMPE Department Lab Support Desk")
     role = st.sidebar.radio("View as", ROLES)
-    # Both sidebar groups are radio buttons, so without this caption and the
-    # divider below they read as one list and "Student" looks like a page to
-    # navigate to rather than a whole interface to switch into.
-    st.sidebar.caption(
-        "Switches this demo between the student submit form and the full desk "
-        "view. It is not a login; the prototype has no accounts."
-    )
 
     # The student view is the submit form and nothing else, so it needs no page
     # navigation; the staff view is the whole desk. Hiding the "Go to" radio
