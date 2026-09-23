@@ -403,7 +403,7 @@ The assignment notes that recommending anything other than unconditional continu
 
 ## Calculation Appendix
 
-Every number above is produced by one of five standalone Python scripts in `analysis/`. Each runs on its own from the repository root, prints an aligned plain-text table, and is deterministic — the simulation fixes its random seed as the first executable statement of main — so every figure quoted in this report reproduces exactly, and the outputs are quoted verbatim.
+Every number above is produced by one of five standalone Python scripts in `analysis/`. Each runs on its own from the repository root, prints an aligned plain-text table, and is deterministic — the simulation fixes its random seed as the first executable statement of main — so every figure quoted in this report reproduces exactly, and the outputs are quoted verbatim. The rendered output of all five scripts is collected in `APPENDIX.md` at the repository root, so the appendix can be read without running anything.
 
 | Script | Produces | Report section |
 |---|---|---|
